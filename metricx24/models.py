@@ -81,7 +81,7 @@ class MT5ForRegression(MT5PreTrainedModel):
       decoder_head_mask: Optional[torch.FloatTensor] = None,
       cross_attn_head_mask: Optional[torch.Tensor] = None,
       encoder_outputs: Optional[Tuple[Tuple[torch.Tensor]]] = None,
-      past_key_values: Optional[Tuple[Tuple[torch.Tensor]]] = None,
+      past_key_values: Optional[Union[Tuple[Tuple[torch.Tensor]], transformers.EncoderDecoderCache]] = None,      
       inputs_embeds: Optional[torch.FloatTensor] = None,
       decoder_inputs_embeds: Optional[torch.FloatTensor] = None,
       labels: Optional[torch.FloatTensor] = None,
@@ -146,6 +146,10 @@ class MT5ForRegression(MT5PreTrainedModel):
         decoder_attention_mask = decoder_attention_mask.to(
             self.decoder.first_device
         )
+
+    if isinstance(past_key_values, tuple):
+      # Compatibility past Transformers v4.48.0
+      past_key_values = transformers.EncoderDecoderCache.from_legacy_cache(past_key_values)
 
     # Decode
     decoder_outputs = self.decoder(
