@@ -25,7 +25,8 @@ description = "MetricX models for automatic evaluation of translations"
 requires-python = ">=3.10"
 dependencies = [
     "protobuf",  # Required by sentencepiece but not automatically installed
-    "transformers[torch]>=4.30.2",
+    "transformers>=4.30.2",
+    "torch",  # Listing separately instead of transformers[torch] to help with dependency resolution
     "sentencepiece>=0.1.99",
     "datasets>=2.13.1"
 ]
