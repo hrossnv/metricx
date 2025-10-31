@@ -59,7 +59,12 @@ class MT5ForRegression(MT5PreTrainedModel):
 
     decoder_config = copy.deepcopy(config)
     decoder_config.is_decoder = True
-    decoder_config.is_encoder_decoder = False
+
+    # While is_encoder_decoder should be False here, this causes a bug with transformers 4.55.4 (but not 4.53.3)
+    # https://github.com/huggingface/transformers/issues/40118
+    # All this actually controls is the type of cache -- EncoderDecoderCache vs. DynamicCache.
+    # Prediction values are the same regardless of the cache type, so setting to True to avoid the bug.
+    decoder_config.is_encoder_decoder = True  # False
     decoder_config.num_layers = config.num_decoder_layers
     self.decoder = MT5Stack(decoder_config, self.shared)
 
